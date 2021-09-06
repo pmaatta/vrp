@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang=en-us>
+
+  <head>
+    <title>VRP</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="vrp.css">
+  </head>
+  
+  <body>
+
+    <div class="container">
+
+      <div>
+        <h1>Vehicle Routing Problem solver and visualizer</h1>
+      </div>
+
+      <div class="description">
+        <p>This is an interactive tool for solving and visualizing a variant of the <a href="https://en.wikipedia.org/wiki/Vehicle_routing_problem">Vehicle Routing Problem</a> 
+        (VRP) called the Dynamic Pickup and Delivery Problem with Time Windows (DPDPTW).<button class="info">Show/hide instructions</button> </p>
+      </div>
+
+      <div class="instructions" hidden>
+        <p>
+          With this tool, DPDPTW problem instances can be generated either manually or randomly, and these instances can then be solved (using Google's 
+          <a href="https://developers.google.com/optimization">OR-tools</a> as the solver) and the solutions can be displayed and animated. 
+        </p>
+        <p>
+          In a DPDPTW, a group of vehicles must satisfy a collection of customer requests. Each customer request requires the use of a single vehicle to both to load 
+          a specified amount of goods at one location and to deliver them to another location. All requests must be performed without violating either the vehicle 
+          capacity or the customer time window stipulated at each location. The goal is to find optimal routes for a fleet of vehicles to visit the pickup and delivery locations. 
+          The dynamic element is in the form of new customer requests that arrive as the planned routes are already being carried out. 
+          These new requests must also be incorporated into the existing routes for the vehicles, meaning that the planned routes for one or more vehicles must change.
+        </p>
+        <p>
+          To begin using the tool, first click '<b>Generate random problem</b>'. (If things look messy, you can reduce the number of cars and pickups and generate new problems 
+          as well as toggle 'Use time windows'.) What you see now is an instance of a PDPTW problem. Black circles are vehicles, blue circles are nodes that have to be 
+          visited by vehicles, and the black square is the depot (which can be ignored for now). Red arrows are drawn from pickup nodes to their corresponding delivery 
+          nodes - this means that a single vehicle must visit both nodes and the pickup node must be visited before the delivery node. The numbers in brackets indicate
+          the allowed time window for visiting each node. 
+        </p>
+        <p>
+          Now click '<b>Solve</b>'. This solves the PDPTW instance, meaning that routes for the vehicles are found which yield the minimum cost in terms of the objective 
+          function while observing all of the constraints of the problem. Solution information becomes available after some seconds (or more if the generated instance
+          is very large) at the bottom below the canvas. If the problem was solved successfully, 'Display routes' is enabled. (If not, generate a new problem and try
+          again.) 
+        </p>
+        <p>
+          Now click '<b>Display routes</b>'. This shows the routes for each vehicle in the solution to the PDPTW instance. Then, click on '<b>Advance time</b>'. This animates
+          the vehicles going through their routes as time passes. (If the vehicles do not start moving immediately, this is due to the nodes having time windows which
+          do not allow visiting them too early, so the vehicles must wait for a while before moving.)
+        </p>
+        <p>
+          Finally, while the vehicles are still moving after having pressed 'Advance time', press '<b>Pause</b>' to stop time. Then, click on the canvas in two different spots.
+          This should create a new pickup-delivery request, illustrating the dynamic nature of the VRP variant. Now press '<b>Solve</b>' again to solve the introduced dynamic 
+          problem. After solving you can again display and animate the routes which have changed due to the added nodes.
+        </p>
+        <p>
+          The above illustrates the basic use of the tool with random problem generation, but problem instances can also be generated manually. This is done by selecting 
+          the type of node from the '<b>Add nodes</b>' selector and clicking on the canvas to place the node. (You can clear the current problem instance with '<b>Clear</b>'.) 
+          Each instance requires the insertion of one or more vehicles (cars), at least one node to be visited, and one depot. Visit nodes can be either pickup-delivery node 
+          pairs or task nodes, which are singular nodes that have to be visited. Vehicles take a longer time to service task nodes than other nodes; the service time is indicated
+          below the node which is denoted by a triangle. 
+        </p>
+        <p>
+          The settings and parameters are described below.
+        </p>
+        <ul>
+          <li><b>Add nodes.</b> This selects the type of node to be added when inserting nodes manually.</li>
+          <li><b>Solve.</b> This attempts to solve the problem instance. Solution information is displayed below the canvas.</li>
+          <li><b>Display routes.</b> Displays the routes of the vehicles if a solution to the problem instance is available.</li>
+          <li><b>Display problem.</b> Displays the problem instance if the routes are being shown currently.</li>
+          <li><b>Generate random problem.</b> Generates a random problem instance based on the given parameters.</li>
+          <li><b>Cars.</b> The number of vehicles for random problem generation.</li>
+          <li><b>Pickups.</b> The number of pickup-delivery pairs for random problem generation.</li>
+          <li><b>Clear.</b> Clears the current problem instance.</li>
+          <li><b>Objective function.</b> The problem is optimized in terms of the chosen objective function.</li>
+          <li><b>Solver time limit.</b> The time limit in seconds given to the solver to find a solution to the problem.</li>
+          <li><b>Maximum route length.</b> The maximum route length in units of time for each individual vehicle.</li>
+          <li><b>Use time windows.</b> Whether nodes have time window constraints or not.</li>
+          <li><b>Return to depot.</b> If used, vehicles must end their routes at the depot. If not, vehicles end their routes at the last visited node.</li>
+          <li><b>Time window edit mode.</b> If this mode is on, clicking on nodes allows the manual editing of their time windows.</li>
+          <li><b>Advance time.</b> Starts to advance time and animates the vehicles carrying out their routes.</li>
+          <li><b>Reset time.</b> Resets time to zero if it has moved forward and moves the vehicles to the beginning of their routes. May not work properly if 
+          nodes have been added dynamically.</li>
+          <li><b>Pause.</b> Pauses time.</li>
+          <li><b>Current time.</b> Shows the current time (units are arbitrary).</li>
+        </ul> 
+      </div>
+      
+      <div class="controls">
+        
+        <div class="controls_row1">
+          <label for="mode">Add nodes</label>
+          <select name="mode" id="mode">
+            <option value="pickup-delivery">Pickup-delivery</option>
+            <option value="car">Car</option>
+            <option value="depot">Depot</option>
+            <option value="task">Task</option>
+          </select> 
+          
+          <button id="solve">Solve</button>
+          <button id="routes">Display routes</button>
+          <button id="problem">Display problem</button>
+          <button id="random">Generate random problem</button>
+          
+          <label for="num_cars" id="cars_label">Cars</label>
+          <input required type="number" id="num_cars" name="num_cars" min=1 max=20 step=1 value=4>
+          
+          <label for="num_pairs" id="pairs_label">Pickups</label>
+          <input required type="number" id="num_pairs" name="num_pairs" min=1 max=100 step=1 value=10>
+          
+          <button id="clear">Clear</button>
+        </div>
+        
+        <div class="controls_row2">
+          <label for="objective">Objective function</label>
+          <select name="objective" id="objective">
+            <option value="minSum">Minimize sum of route lengths</option>
+            <option value="minLongest">Minimize length of longest route</option>
+          </select> 
+          
+          <span hidden>
+            <label for="scaling" id="scaling_label">Distance division factor</label>
+            <input required type="number" id="scaling" name="scaling" min=1 max=100 step=1 value=10>
+          </span>
+          
+          <label for="timelimit" id="timelimit_label">Solver time limit (seconds)</label>
+          <input required type="number" id="timelimit" name="timelimit" min=10 max=100 step=1 value=10>
+          
+          <label for="maxlength" id="maxlength_label">Maximum route length</label>
+          <input required type="number" id="maxlength" name="maxlength" min=1 max=10000 step=10 value=1000>
+          
+          <input type="hidden" name="csrftoken" id="csrftoken" value="{{ csrf_token }}">
+        </div>
+        
+        <div class="controls_row3">
+          <label for="timewindows">Use time windows</label>
+          <input type="checkbox" id="timewindows" name="timewindows" checked>
+          
+          <label for="depot">Return to depot</label>
+          <input type="checkbox" id="depot" name="depot">
+          
+          <label for="edit">Time window edit mode</label>
+          <input type="checkbox" id="edit" name="edit">
+          
+          <button id="advance">Advance time</button>
+          <button id="reset">Reset time</button>
+          <button id="pause">Pause</button>
+          <label for="pause" id="time_display">Current time: 0</label>
+        </div>
+        
+      </div>
+
+      <div class="canvas_div">
+        <canvas id="mycanvas" width=960 height=540></canvas>
+      </div>
+      
+      <div class="solution_div">
+      </div>
+      
+    </div>
+
+    <script src="vrp.js" async defer></script>
+
+  </body>
+</html>

@@ -1,0 +1,66 @@
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    font-family: sans-serif;
+    font-size: small;
+    background-color:whitesmoke;
+}
+
+button, label {
+    margin-left: 5px;
+}
+
+.container {
+    margin-left: 20px;
+}
+
+.description {
+    max-width: 960px;
+    margin-bottom: 15px;
+}
+
+.instructions {
+    max-width: 900px;
+    margin: 15px;
+    padding: 10px;
+    border: 1px solid gray;
+    background-color: antiquewhite;
+}
+
+input {
+    width: 40px;
+}
+
+input[type='checkbox'] {
+    width: 15px;
+}
+
+.controls > div {
+    margin-bottom: 5px;
+}
+
+button.info { 
+    background: none; 
+    border: none; 
+    color:blue;
+    font-size: smaller;
+}
+
+button.info:hover { 
+    text-decoration: underline;
+}
+
+#mycanvas { 
+    display: block;
+    background-color: white;
+    border: 1px solid black; 
+}
+
+#cars_label, #pairs_label {
+    margin-left: 6px;
+}
+
+#maxlength {
+    width: 60px;
+}
